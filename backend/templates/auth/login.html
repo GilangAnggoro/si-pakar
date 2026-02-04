@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistem Pakar Gangguan Kecemasan</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'fade-out': 'fadeOut 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1' },
+                            '100%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        }
+        
+        .glass-effect {
+            background: #ffffff;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Fixed alert positioning */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 320px;
+            max-width: 90vw;
+        }
+
+        @media (max-width: 640px) {
+            .alert-container {
+                top: 10px;
+                right: 10px;
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    
+    <!-- Flash Messages - Fixed Position -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+            <div class="alert-item mb-2 animate-fade-in">
+                <div class="bg-white rounded-lg p-3 shadow-md {% if category == 'success' %}border-l-4 border-green-500{% elif category == 'danger' or category == 'error' %}border-l-4 border-red-500{% elif category == 'warning' %}border-l-4 border-yellow-500{% else %}border-l-4 border-blue-500{% endif %}">
+                    <div class="flex items-center space-x-2">
+                        <i class="bi {% if category == 'success' %}bi-check-circle-fill text-green-500{% elif category == 'danger' or category == 'error' %}bi-x-circle-fill text-red-500{% elif category == 'warning' %}bi-exclamation-triangle-fill text-yellow-500{% else %}bi-info-circle-fill text-blue-500{% endif %} text-base flex-shrink-0"></i>
+                        <span class="text-gray-700 font-medium text-xs flex-1">{{ message }}</span>
+                        <button onclick="dismissAlert(this)" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                            <i class="bi bi-x text-base"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Login Container -->
+    <div class="w-full max-w-sm relative z-10 animate-slide-up mt-12 md:mt-16">
+        
+        <!-- Login Card -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 border-2 border-white" style="animation-delay: 0.2s;">
+            <div class="text-center mb-6 md:mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-white rounded-full shadow-md mb-4">
+                    <i class="bi bi-brain text-blue-500 text-2xl md:text-3xl"></i>
+                </div>
+                <h2 class="text-lg md:text-xl font-bold text-white mb-2">Login Admin</h2>
+                <p class="text-blue-50 text-sm">Silakan login untuk melanjutkan</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-4 md:space-y-5" autocomplete="off">
+                <!-- Username -->
+                <div class="space-y-2">
+                    <label for="username" class="block text-sm font-semibold text-white">
+                        <i class="bi bi-person-circle mr-2"></i>Username
+                    </label>
+                    <div class="relative">
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-white border-2 border-white rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 text-sm"
+                               placeholder="Masukkan username"
+                               required
+                               autocomplete="off">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <i class="bi bi-person text-gray-400 text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Password -->
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-semibold text-white">
+                        <i class="bi bi-lock-fill mr-2"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-white border-2 border-white rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 text-sm"
+                               placeholder="Masukkan password"
+                               required
+                               autocomplete="new-password">
+                        <button type="button" 
+                                onclick="togglePassword()"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="bi bi-eye text-sm" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-white hover:bg-gray-50 text-blue-600 font-bold py-2.5 md:py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 text-sm">
+                    <i class="bi bi-box-arrow-in-right text-lg"></i>
+                    <span>Login Sekarang</span>
+                </button>
+            </form>
+            
+            <!-- Footer Info -->
+            <div class="mt-5 md:mt-6 text-center">
+                <p class="text-blue-50 text-xs">
+                    <i class="bi bi-shield-check mr-1"></i>
+                    Sistem terenkripsi dan aman
+                </p>
+            </div>
+        </div>
+        
+        <!-- Copyright -->
+        <div class="text-center mt-6 animate-fade-in" style="animation-delay: 0.4s;">
+            <p class="text-gray-600 text-xs">
+                © 2024 Sistem Pakar Gangguan Kecemasan. By Gilang.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+
+        function dismissAlert(button) {
+            const alertItem = button.closest('.alert-item');
+            alertItem.style.animation = 'fadeOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                alertItem.remove();
+                // Remove container if no alerts left
+                const container = document.querySelector('.alert-container');
+                if (container && !container.querySelector('.alert-item')) {
+                    container.remove();
+                }
+            }, 300);
+        }
+        
+        // Auto dismiss alerts after 5 seconds with smooth fade
+        setTimeout(() => {
+            const alertItems = document.querySelectorAll('.alert-item');
+            alertItems.forEach(item => {
+                item.style.animation = 'fadeOut 0.5s ease-out forwards';
+                setTimeout(() => {
+                    item.remove();
+                    // Remove container if no alerts left
+                    const container = document.querySelector('.alert-container');
+                    if (container && !container.querySelector('.alert-item')) {
+                        container.remove();
+                    }
+                }, 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

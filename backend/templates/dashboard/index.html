@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Sistem Pakar{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Alert positioning - sama seperti login */
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 320px;
+        max-width: 90vw;
+    }
+
+    @media (max-width: 640px) {
+        .alert-container {
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Flash Messages - Fixed Position (sama seperti login) -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+        {% for category, message in messages %}
+        <div class="alert-item mb-2 animate-fade-in">
+            <div class="bg-white rounded-lg p-3 shadow-md {% if category == 'success' %}border-l-4 border-green-500{% elif category == 'danger' or category == 'error' %}border-l-4 border-red-500{% elif category == 'warning' %}border-l-4 border-yellow-500{% else %}border-l-4 border-blue-500{% endif %}">
+                <div class="flex items-center space-x-2">
+                    <i class="bi {% if category == 'success' %}bi-check-circle-fill text-green-500{% elif category == 'danger' or category == 'error' %}bi-x-circle-fill text-red-500{% elif category == 'warning' %}bi-exclamation-triangle-fill text-yellow-500{% else %}bi-info-circle-fill text-blue-500{% endif %} text-base flex-shrink-0"></i>
+                    <span class="text-gray-700 font-medium text-xs flex-1">{{ message }}</span>
+                    <button onclick="dismissAlert(this)" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                        <i class="bi bi-x text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<!-- Page Header -->
+<div class="mb-6 sm:mb-8 animate-fade-in">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center space-x-2 sm:space-x-3">
+        <i class="bi bi-speedometer2 text-blue-600 text-xl sm:text-2xl"></i>
+        <span>Dashboard</span>
+    </h1>
+    <p class="text-sm sm:text-base text-gray-500 mt-2">Selamat datang di Admin Panel Sistem Pakar Gangguan Kecemasan</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+    <!-- Card 1: Gejala -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 sm:p-6 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-fade-in border-2 border-white">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <i class="bi bi-list-check text-2xl sm:text-3xl text-white"></i>
+            </div>
+            <span class="bg-white bg-opacity-20 text-white px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">Data</span>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-white mb-1">{{ total_gejala }}</h3>
+        <p class="text-blue-50 text-xs sm:text-sm font-medium">Total Gejala</p>
+    </div>
+
+    <!-- Card 2: Penyakit -->
+    <div class="bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl p-5 sm:p-6 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-fade-in border-2 border-white" style="animation-delay: 0.1s;">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <i class="bi bi-heart-pulse text-2xl sm:text-3xl text-white"></i>
+            </div>
+            <span class="bg-white bg-opacity-20 text-white px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">Data</span>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-white mb-1">{{ total_penyakit }}</h3>
+        <p class="text-rose-50 text-xs sm:text-sm font-medium">Total Penyakit</p>
+    </div>
+
+    <!-- Card 3: Aturan -->
+    <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-5 sm:p-6 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-fade-in border-2 border-white" style="animation-delay: 0.2s;">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <i class="bi bi-diagram-3 text-2xl sm:text-3xl text-white"></i>
+            </div>
+            <span class="bg-white bg-opacity-20 text-white px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">Data</span>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-white mb-1">{{ total_aturan }}</h3>
+        <p class="text-amber-50 text-xs sm:text-sm font-medium">Total Aturan</p>
+    </div>
+
+    <!-- Card 4: Konsultasi -->
+    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 sm:p-6 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-fade-in border-2 border-white" style="animation-delay: 0.3s;">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <i class="bi bi-people text-2xl sm:text-3xl text-white"></i>
+            </div>
+            <span class="bg-white bg-opacity-20 text-white px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">Total</span>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-white mb-1">{{ total_konsultasi }}</h3>
+        <p class="text-emerald-50 text-xs sm:text-sm font-medium">Total Konsultasi</p>
+    </div>
+</div>
+
+<!-- Charts & Recent Data -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+    <!-- Chart - Distribusi Penyakit -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-4 sm:p-6 animate-fade-in hover:shadow-lg transition-shadow duration-300 border-2 border-white" style="animation-delay: 0.4s;">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 flex items-center space-x-2">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-pie-chart-fill text-blue-600 text-sm sm:text-base"></i>
+                </div>
+                <span class="text-base sm:text-xl">Distribusi Penyakit</span>
+            </h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+            <canvas id="penyakitChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Riwayat Login -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in hover:shadow-lg transition-shadow duration-300 border-2 border-white" style="animation-delay: 0.5s;">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 sm:px-6 py-3 sm:py-4">
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+                <i class="bi bi-clock-history text-sm sm:text-base"></i>
+                <span>Riwayat Login</span>
+            </h2>
+        </div>
+        <div class="divide-y divide-gray-100 max-h-80 sm:max-h-96 overflow-y-auto">
+            {% for riwayat in riwayat_login %}
+            <div class="p-3 sm:p-4 hover:bg-blue-50 transition-colors duration-200 group">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                            <i class="bi bi-person-fill text-blue-600 text-sm sm:text-base"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-gray-800 truncate text-sm sm:text-base">{{ riwayat.admin.nama_admin }}</p>
+                        <p class="text-xs sm:text-sm text-gray-500 flex items-center space-x-1 mt-1">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>{{ riwayat.waktu_login.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-6 sm:p-8 text-center">
+                <i class="bi bi-inbox text-4xl sm:text-5xl text-gray-300 mb-3"></i>
+                <p class="text-gray-400 text-sm sm:text-base">Belum ada riwayat login</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Consultations -->
+<div class="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in hover:shadow-lg transition-shadow duration-300 border-2 border-white" style="animation-delay: 0.6s;">
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 sm:px-6 py-3 sm:py-4">
+        <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+            <i class="bi bi-file-text-fill text-sm sm:text-base"></i>
+            <span>Konsultasi Terbaru</span>
+        </h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <i class="bi bi-calendar3 mr-1"></i><span class="hidden sm:inline">Tanggal</span>
+                    </th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <i class="bi bi-person mr-1"></i><span class="hidden sm:inline">Nama User</span>
+                    </th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden md:table-cell">
+                        <i class="bi bi-123 mr-1"></i>Usia
+                    </th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">
+                        <i class="bi bi-gender-ambiguous mr-1"></i>Jenis Kelamin
+                    </th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <i class="bi bi-clipboard-pulse mr-1"></i><span class="hidden sm:inline">Hasil Diagnosis</span>
+                    </th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <i class="bi bi-graph-up mr-1"></i><span class="hidden sm:inline">CF</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for konsultasi in konsultasi_terbaru %}
+                <tr class="hover:bg-blue-50 transition-colors duration-150">
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <div class="text-xs sm:text-sm text-gray-500">
+                            {{ konsultasi.tanggal_konsultasi.strftime('%d/%m/%Y') }}<br class="hidden sm:block">
+                            <i class="bi bi-clock"></i> {{ konsultasi.tanggal_konsultasi.strftime('%H:%M') }}
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <div class="font-semibold text-gray-800 text-xs sm:text-sm">{{ konsultasi.nama_user }}</div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-gray-600 text-xs sm:text-sm hidden md:table-cell">
+                        {{ konsultasi.usia }} tahun
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
+                        {% if konsultasi.jenis_kelamin == 'Laki-laki' %}
+                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                <i class="bi bi-gender-male mr-1"></i><span class="hidden xl:inline">{{ konsultasi.jenis_kelamin }}</span>
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-200">
+                                <i class="bi bi-gender-female mr-1"></i><span class="hidden xl:inline">{{ konsultasi.jenis_kelamin }}</span>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        <div class="font-semibold text-blue-600 text-xs sm:text-sm">{{ konsultasi.penyakit.nama_penyakit }}</div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-center">
+                        <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
+                            <i class="bi bi-percent mr-1"></i>{{ "%.2f"|format(konsultasi.nilai_cf * 100) }}%
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-4 sm:px-6 py-8 sm:py-12">
+                        <div class="text-center">
+                            <i class="bi bi-inbox text-5xl sm:text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-400 text-base sm:text-lg">Belum ada data konsultasi</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Alert dismiss function
+    function dismissAlert(button) {
+        const alertItem = button.closest('.alert-item');
+        alertItem.classList.add('fade-out');
+        setTimeout(() => {
+            alertItem.remove();
+            // Remove container if no alerts left
+            const container = document.querySelector('.alert-container');
+            if (container && !container.querySelector('.alert-item')) {
+                container.remove();
+            }
+        }, 500);
+    }
+    
+    // Auto dismiss alerts after 5 seconds
+    setTimeout(() => {
+        const alertItems = document.querySelectorAll('.alert-item');
+        alertItems.forEach(item => {
+            item.classList.add('fade-out');
+            setTimeout(() => {
+                item.remove();
+                const container = document.querySelector('.alert-container');
+                if (container && !container.querySelector('.alert-item')) {
+                    container.remove();
+                }
+            }, 500);
+        });
+    }, 5000);
+
+    // Chart Configuration - Doughnut Chart
+    const ctx = document.getElementById('penyakitChart').getContext('2d');
+    const penyakitChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ penyakit_labels|safe }},
+            datasets: [{
+                label: 'Jumlah Kasus',
+                data: {{ penyakit_values|safe }},
+                backgroundColor: [
+                    '#3B82F6',  // Blue
+                    '#F43F5E',  // Rose
+                    '#06B6D4',  // Cyan
+                    '#10B981',  // Emerald
+                    '#F59E0B',  // Amber
+                    '#8B5CF6',  // Violet
+                    '#EF4444',  // Red
+                    '#6366F1',  // Indigo
+                    '#EC4899',  // Pink
+                    '#14B8A6'   // Teal
+                ],
+                borderColor: '#FFFFFF',
+                borderWidth: 2,
+                hoverOffset: 8,
+                hoverBorderColor: '#FFFFFF',
+                hoverBorderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        padding: 16,
+                        font: {
+                            size: 13,
+                            family: "'Inter', sans-serif",
+                            weight: '500'
+                        },
+                        color: '#374151',
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const value = data.datasets[0].data[i];
+                                    const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return {
+                                        text: `${label} (${percentage}%)`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    titleColor: '#1F2937',
+                    bodyColor: '#4B5563',
+                    padding: 12,
+                    titleFont: {
+                        size: 14,
+                        weight: '600'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    boxWidth: 10,
+                    boxHeight: 10,
+                    boxPadding: 6,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return [
+                                ` ${label}`,
+                                ` Jumlah: ${value} kasus`,
+                                ` Persentase: ${percentage}%`
+                            ];
+                        }
+                    }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1000,
+                easing: 'easeInOutCubic'
+            },
+            cutout: '70%',
+            radius: '85%'
+        }
+    });
+</script>
+{% endblock %}

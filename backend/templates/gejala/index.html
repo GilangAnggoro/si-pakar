@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Data Gejala - Sistem Pakar{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in">
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center space-x-2 sm:space-x-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <i class="bi bi-list-check text-blue-600 text-lg sm:text-xl"></i>
+            </div>
+            <span>Data Gejala</span>
+        </h1>
+        <p class="text-sm sm:text-base text-gray-500 mt-2">Kelola data gejala gangguan kecemasan</p>
+    </div>
+    
+    <a href="{{ url_for('gejala.create') }}" 
+       class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 shadow-sm hover:shadow-md text-sm sm:text-base">
+        <i class="bi bi-plus-lg"></i>
+        <span>Tambah Gejala</span>
+    </a>
+</div>
+
+<!-- Search Bar -->
+<div class="mb-4 sm:mb-6 animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4 text-gray-400">
+            <i class="bi bi-search text-base sm:text-lg"></i>
+        </span>
+        <input 
+            type="text"
+            id="searchInput"
+            placeholder="Cari kode, nama gejala..."
+            class="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                   transition-all duration-200 text-sm sm:text-base"
+            onkeyup="searchTable()"
+        >
+    </div>
+</div>
+
+<!-- Data Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.2s;">
+    <div class="overflow-x-auto">
+        <table class="w-full" id="gejalaTable">
+            <thead class="bg-gradient-to-r from-blue-500 to-blue-600">
+                <tr>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">No</th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Kode</th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Nama Gejala</th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider hidden md:table-cell">Pertanyaan</th>
+                    <th class="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for gejala in gejala_list.items %}
+                <tr class="hover:bg-blue-50 transition-colors duration-150">
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-gray-600 text-xs sm:text-sm">
+                        {{ loop.index + (gejala_list.page - 1) * gejala_list.per_page }}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            {{ gejala.kode_gejala }}
+                        </span>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        <div class="font-medium text-gray-800 text-xs sm:text-sm">
+                            {{ gejala.nama_gejala }}
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell">
+                        <div class="text-gray-600 text-xs sm:text-sm line-clamp-2">
+                            {{ gejala.pertanyaan }}
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-center">
+                        <div class="flex items-center justify-center space-x-1.5 sm:space-x-2">
+                            <a href="{{ url_for('gejala.edit', id=gejala.id) }}" 
+                               class="w-8 h-8 sm:w-9 sm:h-9 bg-amber-50 hover:bg-amber-100 text-amber-600 hover:text-amber-700 rounded-lg transition-all duration-200 flex items-center justify-center border border-amber-200"
+                               title="Edit Gejala">
+                                <i class="bi bi-pencil text-xs sm:text-sm"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('gejala.delete', id=gejala.id) }}" 
+                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus gejala ini?')" class="inline">
+                                <button type="submit" 
+                                        class="w-8 h-8 sm:w-9 sm:h-9 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-all duration-200 flex items-center justify-center border border-red-200"
+                                        title="Hapus Gejala">
+                                    <i class="bi bi-trash text-xs sm:text-sm"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-4 sm:px-6 py-8 sm:py-12">
+                        <div class="text-center">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                <i class="bi bi-inbox text-3xl sm:text-4xl text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-500 text-base sm:text-lg font-medium mb-2">Belum ada data gejala</p>
+                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Mulai dengan menambahkan gejala pertama</p>
+                            <a href="{{ url_for('gejala.create') }}" 
+                               class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors shadow-sm text-sm">
+                                <i class="bi bi-plus-lg"></i>
+                                <span>Tambah Gejala</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if gejala_list.pages > 1 %}
+    <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
+                Menampilkan {{ gejala_list.per_page * (gejala_list.page - 1) + 1 }} - 
+                {{ [gejala_list.per_page * gejala_list.page, gejala_list.total]|min }} 
+                dari {{ gejala_list.total }} gejala
+            </div>
+            <div class="flex space-x-2">
+                {% if gejala_list.has_prev %}
+                <a href="{{ url_for('gejala.index', page=gejala_list.prev_num) }}" 
+                   class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center space-x-1 text-xs sm:text-sm">
+                    <i class="bi bi-chevron-left"></i>
+                    <span class="hidden sm:inline">Sebelumnya</span>
+                </a>
+                {% endif %}
+                
+                <span class="px-3 sm:px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg font-medium text-xs sm:text-sm">
+                    Hal {{ gejala_list.page }}/{{ gejala_list.pages }}
+                </span>
+                
+                {% if gejala_list.has_next %}
+                <a href="{{ url_for('gejala.index', page=gejala_list.next_num) }}" 
+                   class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center space-x-1 text-xs sm:text-sm">
+                    <span class="hidden sm:inline">Selanjutnya</span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Search Script -->
+<script>
+function searchTable() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById("gejalaTable");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+        const tdKode = tr[i].getElementsByTagName("td")[1];
+        const tdNama = tr[i].getElementsByTagName("td")[2];
+        const tdPertanyaan = tr[i].getElementsByTagName("td")[3];
+
+        if (tdKode && tdNama && tdPertanyaan) {
+            const kode = tdKode.textContent.toLowerCase();
+            const nama = tdNama.textContent.toLowerCase();
+            const pertanyaan = tdPertanyaan.textContent.toLowerCase();
+
+            tr[i].style.display =
+                kode.includes(filter) ||
+                nama.includes(filter) ||
+                pertanyaan.includes(filter)
+                ? ""
+                : "none";
+        }
+    }
+}
+</script>
+{% endblock %}

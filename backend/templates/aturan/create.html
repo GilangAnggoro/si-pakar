@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Aturan - Sistem Pakar{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in">
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center space-x-2 sm:space-x-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                <i class="bi bi-plus-circle text-amber-600 text-lg sm:text-xl"></i>
+            </div>
+            <span>Tambah Aturan</span>
+        </h1>
+        <p class="text-sm sm:text-base text-gray-500 mt-2">Tambahkan aturan basis pengetahuan baru</p>
+    </div>
+    
+    <a href="{{ url_for('aturan.index') }}" 
+       class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 border border-gray-200 text-sm sm:text-base">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+    </a>
+</div>
+
+<!-- Form Card -->
+<div class="bg-white rounded-xl overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.1s;">
+    <div class="bg-gradient-to-r from-amber-500 to-amber-600 px-5 sm:px-8 py-4 sm:py-6">
+        <h2 class="text-lg sm:text-xl font-semibold text-white flex items-center space-x-2">
+            <i class="bi bi-file-earmark-plus text-base sm:text-lg"></i>
+            <span>Form Tambah Aturan</span>
+        </h2>
+    </div>
+    
+    <div class="p-5 sm:p-8">
+        <form method="POST" action="{{ url_for('aturan.create') }}" class="space-y-5 sm:space-y-6">
+            <!-- Penyakit -->
+            <div>
+                <label for="kode_penyakit" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Penyakit <span class="text-red-500">*</span>
+                </label>
+                <select class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm sm:text-base" 
+                        id="kode_penyakit" 
+                        name="kode_penyakit" 
+                        required>
+                    <option value="">Pilih Penyakit</option>
+                    {% for penyakit in penyakit_list %}
+                    <option value="{{ penyakit.kode_penyakit }}">{{ penyakit.kode_penyakit }} - {{ penyakit.nama_penyakit }}</option>
+                    {% endfor %}
+                </select>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Pilih penyakit yang sesuai dengan gejala</span>
+                </p>
+            </div>
+            
+            <!-- Gejala -->
+            <div>
+                <label for="kode_gejala" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Gejala <span class="text-red-500">*</span>
+                </label>
+                <select class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm sm:text-base" 
+                        id="kode_gejala" 
+                        name="kode_gejala" 
+                        required>
+                    <option value="">Pilih Gejala</option>
+                    {% for gejala in gejala_list %}
+                    <option value="{{ gejala.kode_gejala }}">{{ gejala.kode_gejala }} - {{ gejala.nama_gejala }}</option>
+                    {% endfor %}
+                </select>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Pilih gejala yang berkaitan dengan penyakit</span>
+                </p>
+            </div>
+            
+            <!-- MB dan MD -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                <div>
+                    <label for="mb" class="block text-sm font-semibold text-gray-700 mb-2">
+                        MB (Measure of Belief) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" 
+                           step="0.1" 
+                           min="0" 
+                           max="1" 
+                           class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm sm:text-base" 
+                           id="mb" 
+                           name="mb" 
+                           placeholder="0.0 - 1.0" 
+                           required>
+                    <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Nilai keyakinan (0.0 - 1.0)</span>
+                    </p>
+                </div>
+                
+                <div>
+                    <label for="md" class="block text-sm font-semibold text-gray-700 mb-2">
+                        MD (Measure of Disbelief) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" 
+                           step="0.1" 
+                           min="0" 
+                           max="1" 
+                           class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm sm:text-base" 
+                           id="md" 
+                           name="md" 
+                           placeholder="0.0 - 1.0" 
+                           required>
+                    <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Nilai ketidakpercayaan (0.0 - 1.0)</span>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Info Alert -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-lightbulb text-amber-600 text-sm sm:text-base"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-amber-900 mb-1 text-sm sm:text-base">Informasi</h4>
+                    <p class="text-xs sm:text-sm text-amber-700">Nilai CF akan dihitung otomatis dengan rumus: <span class="font-mono font-bold">CF = MB - MD</span></p>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
+                <button type="submit" 
+                        class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
+                    <i class="bi bi-check-lg"></i>
+                    <span>Simpan Aturan</span>
+                </button>
+                <a href="{{ url_for('aturan.index') }}" 
+                   class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 border border-gray-200 text-sm sm:text-base">
+                    <i class="bi bi-x-lg"></i>
+                    <span>Batal</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

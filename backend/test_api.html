@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API - Sistem Pakar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #8B7AB8 0%, #9D8EC3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(139, 122, 184, 0.3);
+        }
+        .result-box {
+            background: #F8F7FC;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8B7AB8 0%, #9D8EC3 100%);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-white text-center mb-4">🧪 Test API Sistem Pakar</h1>
+        
+        <!-- Test 1: Get Gejala -->
+        <div class="test-card">
+            <h4>1. Get All Gejala</h4>
+            <p class="text-muted">GET /api/konsultasi/gejala</p>
+            <button class="btn btn-primary" onclick="testGetGejala()">
+                Test API
+            </button>
+            <div id="result-gejala" class="result-box" style="display:none;">
+                <h6>Response:</h6>
+                <pre id="gejala-data"></pre>
+            </div>
+        </div>
+        
+        <!-- Test 2: Diagnosa -->
+        <div class="test-card">
+            <h4>2. Diagnosa dengan Forward Chaining & CF</h4>
+            <p class="text-muted">POST /api/konsultasi/diagnosa</p>
+            
+            <div class="mb-3">
+                <label class="form-label">Nama User</label>
+                <input type="text" class="form-control" id="nama" value="John Doe">
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Usia</label>
+                    <input type="number" class="form-control" id="usia" value="25">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    <select class="form-select" id="gender">
+                        <option>Laki-laki</option>
+                        <option>Perempuan</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Pilih Gejala (Contoh: P01 - Gangguan Kecemasan Perpisahan)</label>
+                <div class="form-check">
+                    <input class="form-check-input gejala-check" type="checkbox" value="G01" id="g01">
+                    <label class="form-check-label" for="g01">
+                        G01 - Merasa sangat sedih saat berpisah
+                    </label>
+                    <select class="form-select form-select-sm mt-1" id="k01">
+                        <option value="tidak_pernah">Tidak Pernah</option>
+                        <option value="jarang">Jarang</option>
+                        <option value="sering" selected>Sering</option>
+                        <option value="sangat_sering">Sangat Sering</option>
+                    </select>
+                </div>
+                
+                <div class="form-check mt-2">
+                    <input class="form-check-input gejala-check" type="checkbox" value="G02" id="g02">
+                    <label class="form-check-label" for="g02">
+                        G02 - Sering khawatir berlebihan terhadap keselamatan orang terdekat
+                    </label>
+                    <select class="form-select form-select-sm mt-1" id="k02">
+                        <option value="tidak_pernah">Tidak Pernah</option>
+                        <option value="jarang">Jarang</option>
+                        <option value="sering">Sering</option>
+                        <option value="sangat_sering" selected>Sangat Sering</option>
+                    </select>
+                </div>
+                
+                <div class="form-check mt-2">
+                    <input class="form-check-input gejala-check" type="checkbox" value="G03" id="g03" checked>
+                    <label class="form-check-label" for="g03">
+                        G03 - Takut berlebihan jika hal buruk terjadi
+                    </label>
+                    <select class="form-select form-select-sm mt-1" id="k03">
+                        <option value="tidak_pernah">Tidak Pernah</option>
+                        <option value="jarang">Jarang</option>
+                        <option value="sering" selected>Sering</option>
+                        <option value="sangat_sering">Sangat Sering</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="testDiagnosa()">
+                Diagnosa
+            </button>
+            <div id="result-diagnosa" class="result-box" style="display:none;">
+                <h6>Response:</h6>
+                <pre id="diagnosa-data"></pre>
+            </div>
+        </div>
+        
+        <!-- Test 3: Get Penyakit -->
+        <div class="test-card">
+            <h4>3. Get All Penyakit</h4>
+            <p class="text-muted">GET /api/konsultasi/penyakit</p>
+            <button class="btn btn-primary" onclick="testGetPenyakit()">
+                Test API
+            </button>
+            <div id="result-penyakit" class="result-box" style="display:none;">
+                <h6>Response:</h6>
+                <pre id="penyakit-data"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api/konsultasi';
+        
+        async function testGetGejala() {
+            try {
+                const response = await fetch(`${API_URL}/gejala`);
+                const data = await response.json();
+                
+                document.getElementById('result-gejala').style.display = 'block';
+                document.getElementById('gejala-data').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        async function testDiagnosa() {
+            try {
+                const gejala = [];
+                
+                // Collect checked symptoms
+                document.querySelectorAll('.gejala-check:checked').forEach((checkbox, index) => {
+                    const kode = checkbox.value;
+                    const kepastian = document.getElementById(`k0${index + 1}`).value;
+                    gejala.push({ kode, kepastian });
+                });
+                
+                if (gejala.length === 0) {
+                    alert('Pilih minimal satu gejala!');
+                    return;
+                }
+                
+                const payload = {
+                    nama_user: document.getElementById('nama').value,
+                    usia: parseInt(document.getElementById('usia').value),
+                    jenis_kelamin: document.getElementById('gender').value,
+                    gejala: gejala
+                };
+                
+                const response = await fetch(`${API_URL}/diagnosa`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('result-diagnosa').style.display = 'block';
+                document.getElementById('diagnosa-data').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        async function testGetPenyakit() {
+            try {
+                const response = await fetch(`${API_URL}/penyakit`);
+                const data = await response.json();
+                
+                document.getElementById('result-penyakit').style.display = 'block';
+                document.getElementById('penyakit-data').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

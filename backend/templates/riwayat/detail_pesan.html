@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Pesan - Sistem Pakar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 320px;
+        max-width: 90vw;
+    }
+
+    @media (max-width: 640px) {
+        .alert-container {
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Flash Messages - Fixed Position -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+        {% for category, message in messages %}
+        <div class="alert-item mb-2 animate-fade-in">
+            <div class="bg-white rounded-lg p-3 shadow-md {% if category == 'success' %}border-l-4 border-green-500{% elif category == 'danger' or category == 'error' %}border-l-4 border-red-500{% elif category == 'warning' %}border-l-4 border-yellow-500{% else %}border-l-4 border-blue-500{% endif %}">
+                <div class="flex items-center space-x-2">
+                    <i class="bi {% if category == 'success' %}bi-check-circle-fill text-green-500{% elif category == 'danger' or category == 'error' %}bi-x-circle-fill text-red-500{% elif category == 'warning' %}bi-exclamation-triangle-fill text-yellow-500{% else %}bi-info-circle-fill text-blue-500{% endif %} text-base flex-shrink-0"></i>
+                    <span class="text-gray-700 font-medium text-xs flex-1">{{ message }}</span>
+                    <button onclick="dismissAlert(this)" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                        <i class="bi bi-x text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<!-- Back Button -->
+<div class="mb-4 md:mb-6 animate-fade-in">
+    <a href="{{ url_for('riwayat.pesan_user') }}" 
+       class="inline-flex items-center space-x-2 text-blue-500 hover:text-blue-700 font-semibold transition-colors text-sm md:text-base">
+        <i class="bi bi-arrow-left-circle text-lg md:text-xl"></i>
+        <span>Kembali ke Daftar Pesan</span>
+    </a>
+</div>
+
+<!-- Message Card -->
+<div class="bg-white rounded-xl md:rounded-2xl shadow-lg overflow-hidden animate-fade-in" style="animation-delay: 0.1s;">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 md:px-8 py-4 md:py-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h1 class="text-xl md:text-2xl font-bold text-white flex items-center space-x-3">
+                <i class="bi bi-envelope-open-fill"></i>
+                <span>Detail Pesan</span>
+            </h1>
+            
+            <!-- Status Badge -->
+            {% if not pesan.is_read %}
+            <span class="inline-flex items-center px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold bg-yellow-400 text-yellow-900 animate-pulse w-fit">
+                <i class="bi bi-circle-fill text-yellow-600 text-xs mr-2"></i>Belum Dibaca
+            </span>
+            {% else %}
+            <span class="inline-flex items-center px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold bg-white bg-opacity-20 text-white w-fit">
+                <i class="bi bi-check-circle-fill mr-2"></i>Sudah Dibaca
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Message Content -->
+    <div class="p-4 md:p-8">
+        <!-- Sender Info Card -->
+        <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+            <h2 class="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center space-x-2">
+                <i class="bi bi-person-circle text-blue-500 text-xl md:text-2xl"></i>
+                <span>Informasi Pengirim</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <!-- Name -->
+                <div class="space-y-1">
+                    <p class="text-xs md:text-sm text-gray-500 font-medium">Nama</p>
+                    <p class="text-base md:text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <i class="bi bi-person-fill text-blue-500"></i>
+                        <span class="break-words">{{ pesan.name }}</span>
+                    </p>
+                </div>
+                
+                <!-- Email -->
+                <div class="space-y-1">
+                    <p class="text-xs md:text-sm text-gray-500 font-medium">Email</p>
+                    <p class="text-base md:text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <i class="bi bi-envelope-fill text-blue-500"></i>
+                        <span class="break-all">{{ pesan.email }}</span>
+                    </p>
+                </div>
+                
+                <!-- Date -->
+                <div class="space-y-1">
+                    <p class="text-xs md:text-sm text-gray-500 font-medium">Tanggal Kirim</p>
+                    <p class="text-base md:text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <i class="bi bi-calendar-event-fill text-blue-500"></i>
+                        <span>{{ pesan.created_at.strftime('%d/%m/%Y %H:%M') }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- User Account Info (if available) -->
+            {% if pesan.user %}
+            <div class="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-blue-200">
+                <p class="text-xs md:text-sm text-gray-600 flex items-start sm:items-center space-x-2">
+                    <i class="bi bi-check-circle-fill text-green-500 mt-0.5 sm:mt-0"></i>
+                    <span>Pengirim terdaftar dengan username: <span class="font-semibold text-gray-800 break-words">{{ pesan.user.username }}</span></span>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Subject -->
+        <div class="mb-4 md:mb-6">
+            <label class="block text-xs md:text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">Subjek</label>
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 md:p-4">
+                <h3 class="text-lg md:text-xl font-bold text-gray-800 break-words">{{ pesan.subject }}</h3>
+            </div>
+        </div>
+
+        <!-- Message Body -->
+        <div class="mb-6 md:mb-8">
+            <label class="block text-xs md:text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">Pesan</label>
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 md:p-6">
+                <p class="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap break-words">{{ pesan.message }}</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 pt-4 md:pt-6 border-t border-gray-200">
+            {% if not pesan.is_read %}
+            <form method="POST" action="{{ url_for('riwayat.mark_read', id=pesan.id) }}" class="flex-1">
+                <button type="submit" 
+                        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 md:py-3 px-4 md:px-6 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-md text-sm md:text-base">
+                    <i class="bi bi-check-circle-fill text-lg md:text-xl"></i>
+                    <span>Tandai Sudah Dibaca</span>
+                </button>
+            </form>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('riwayat.delete_pesan', id=pesan.id) }}" 
+                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesan ini?')" 
+                  class="flex-1">
+                <button type="submit" 
+                        class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 md:py-3 px-4 md:px-6 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-md text-sm md:text-base">
+                    <i class="bi bi-trash-fill text-lg md:text-xl"></i>
+                    <span>Hapus Pesan</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reply Section (Optional - Future Feature) -->
+<div class="mt-4 md:mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6 animate-fade-in" style="animation-delay: 0.2s;">
+    <div class="flex items-start space-x-3">
+        <i class="bi bi-info-circle-fill text-blue-500 text-xl md:text-2xl flex-shrink-0 mt-0.5"></i>
+        <div>
+            <h3 class="font-bold text-gray-800 mb-1 text-sm md:text-base">Fitur Balas Pesan</h3>
+            <p class="text-xs md:text-sm text-gray-600">Untuk membalas pesan ini, silakan hubungi pengirim melalui email: <a href="mailto:{{ pesan.email }}" class="text-blue-500 font-semibold hover:underline break-all">{{ pesan.email }}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function dismissAlert(button) {
+        const alertItem = button.closest('.alert-item');
+        alertItem.classList.add('fade-out');
+        setTimeout(() => {
+            alertItem.remove();
+            const container = document.querySelector('.alert-container');
+            if (container && !container.querySelector('.alert-item')) {
+                container.remove();
+            }
+        }, 500);
+    }
+    
+    setTimeout(() => {
+        const alertItems = document.querySelectorAll('.alert-item');
+        alertItems.forEach(item => {
+            item.classList.add('fade-out');
+            setTimeout(() => {
+                item.remove();
+                const container = document.querySelector('.alert-container');
+                if (container && !container.querySelector('.alert-item')) {
+                    container.remove();
+                }
+            }, 500);
+        });
+    }, 5000);
+</script>
+{% endblock %}

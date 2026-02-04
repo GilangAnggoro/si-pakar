@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Penyakit - Sistem Pakar{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in">
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center space-x-2 sm:space-x-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-rose-50 rounded-lg flex items-center justify-center">
+                <i class="bi bi-plus-circle text-rose-600 text-lg sm:text-xl"></i>
+            </div>
+            <span>Tambah Penyakit</span>
+        </h1>
+        <p class="text-sm sm:text-base text-gray-500 mt-2">Tambahkan data penyakit gangguan kecemasan baru</p>
+    </div>
+    
+    <a href="{{ url_for('penyakit.index') }}" 
+       class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 border border-gray-200 text-sm sm:text-base">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+    </a>
+</div>
+
+<!-- Form Card -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.1s;">
+    <div class="bg-gradient-to-r from-rose-500 to-rose-600 px-5 sm:px-8 py-4 sm:py-6">
+        <h2 class="text-lg sm:text-xl font-semibold text-white flex items-center space-x-2">
+            <i class="bi bi-file-earmark-plus text-base sm:text-lg"></i>
+            <span>Form Tambah Penyakit</span>
+        </h2>
+    </div>
+    
+    <div class="p-5 sm:p-8">
+        <form method="POST" action="{{ url_for('penyakit.create') }}" class="space-y-5 sm:space-y-6">
+            <!-- Kode Penyakit -->
+            <div>
+                <label for="kode_penyakit" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Kode Penyakit <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all text-sm sm:text-base" 
+                       id="kode_penyakit" 
+                       name="kode_penyakit" 
+                       placeholder="Contoh: P01" 
+                       required>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Masukkan kode unik untuk penyakit</span>
+                </p>
+            </div>
+            
+            <!-- Nama Penyakit -->
+            <div>
+                <label for="nama_penyakit" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Nama Penyakit <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all text-sm sm:text-base" 
+                       id="nama_penyakit" 
+                       name="nama_penyakit" 
+                       placeholder="Masukkan nama penyakit" 
+                       required>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Nama lengkap penyakit gangguan kecemasan</span>
+                </p>
+            </div>
+            
+            <!-- Solusi -->
+            <div>
+                <label for="solusi" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Solusi Pengobatan <span class="text-red-500">*</span>
+                </label>
+                <textarea class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all text-sm sm:text-base" 
+                          id="solusi" 
+                          name="solusi" 
+                          rows="5" 
+                          placeholder="Masukkan solusi atau rekomendasi pengobatan..." 
+                          required></textarea>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500 flex items-center space-x-1">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Berikan solusi atau saran pengobatan yang tepat</span>
+                </p>
+            </div>
+            
+            <!-- Info Alert -->
+            <div class="bg-rose-50 border border-rose-200 rounded-lg p-3 sm:p-4 flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-lightbulb text-rose-600 text-sm sm:text-base"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-rose-900 mb-1 text-sm sm:text-base">Tips Pengobatan</h4>
+                    <p class="text-xs sm:text-sm text-rose-700">Pastikan solusi yang diberikan komprehensif dan dapat membantu pengguna dalam mengatasi gangguan kecemasan mereka.</p>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
+                <button type="submit" 
+                        class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm hover:shadow-md text-sm sm:text-base">
+                    <i class="bi bi-check-lg"></i>
+                    <span>Simpan Penyakit</span>
+                </button>
+                <a href="{{ url_for('penyakit.index') }}" 
+                   class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 sm:py-3 px-5 sm:px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 border border-gray-200 text-sm sm:text-base">
+                    <i class="bi bi-x-lg"></i>
+                    <span>Batal</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

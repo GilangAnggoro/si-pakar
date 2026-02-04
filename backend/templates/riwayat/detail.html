@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Konsultasi - Sistem Pakar{% endblock %}
+
+{% block content %}
+<!-- Back Button -->
+<div class="mb-6 sm:mb-8 animate-fade-in">
+    <a href="{{ url_for('riwayat.konsultasi') }}" 
+       class="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold transition-colors text-sm sm:text-base">
+        <i class="bi bi-arrow-left-circle text-lg sm:text-xl"></i>
+        <span>Kembali ke Riwayat Konsultasi</span>
+    </a>
+</div>
+
+<!-- Page Header -->
+<div class="mb-6 sm:mb-8 animate-fade-in" style="animation-delay: 0.1s;">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center space-x-2 sm:space-x-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+            <i class="bi bi-file-text text-blue-600 text-lg sm:text-xl"></i>
+        </div>
+        <span>Detail Konsultasi</span>
+    </h1>
+    <p class="text-sm sm:text-base text-gray-500 mt-2">Informasi lengkap hasil konsultasi user</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+    <!-- Informasi User -->
+    <div class="bg-white rounded-xl overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.2s;">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 sm:px-5 py-3 sm:py-4">
+            <h2 class="text-sm sm:text-base font-semibold text-white flex items-center space-x-2">
+                <i class="bi bi-person-circle text-sm sm:text-base"></i>
+                <span>Informasi User</span>
+            </h2>
+        </div>
+        
+        <div class="p-4 sm:p-5 space-y-3">
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-200">
+                    <i class="bi bi-person-fill text-blue-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-500 mb-1">Nama Lengkap</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm truncate">{{ riwayat.nama_user }}</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center border border-purple-200">
+                    <i class="bi bi-cake2 text-purple-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs text-gray-500 mb-1">Usia</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm">{{ riwayat.usia }} tahun</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center border border-pink-200">
+                    <i class="bi bi-gender-ambiguous text-pink-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs text-gray-500 mb-1">Jenis Kelamin</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm">{{ riwayat.jenis_kelamin }}</p>
+                </div>
+            </div>
+            
+            {% if riwayat.email %}
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center border border-green-200">
+                    <i class="bi bi-envelope-fill text-green-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-500 mb-1">Email</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm break-all">{{ riwayat.email }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center border border-orange-200">
+                    <i class="bi bi-calendar-event text-orange-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs text-gray-500 mb-1">Tanggal Konsultasi</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm">{{ riwayat.tanggal_konsultasi.strftime('%d %B %Y, %H:%M') }}</p>
+                </div>
+            </div>
+            
+            {% if riwayat.prodi %}
+            <div class="flex items-start space-x-2.5 sm:space-x-3">
+                <div class="flex-shrink-0 w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center border border-indigo-200">
+                    <i class="bi bi-mortarboard text-indigo-600 text-xs sm:text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs text-gray-500 mb-1">Program Studi</p>
+                    <p class="font-semibold text-gray-800 text-xs sm:text-sm">{{ riwayat.prodi }}</p>
+                    {% if riwayat.semester %}
+                    <p class="text-xs text-gray-600">Semester {{ riwayat.semester }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Hasil Diagnosis -->
+    <div class="bg-white rounded-xl overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.3s;">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 sm:px-5 py-3 sm:py-4">
+            <h2 class="text-sm sm:text-base font-semibold text-white flex items-center space-x-2">
+                <i class="bi bi-heart-pulse-fill text-sm sm:text-base"></i>
+                <span>Hasil Diagnosis</span>
+            </h2>
+        </div>
+        
+        <div class="p-4 sm:p-5 space-y-3 sm:space-y-4">
+            <!-- Kode Penyakit -->
+            <div>
+                <p class="text-xs text-gray-500 mb-2">Kode Penyakit</p>
+                <span class="inline-flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                    {{ riwayat.kode_penyakit }}
+                </span>
+            </div>
+            
+            <!-- Nama Penyakit -->
+            <div>
+                <p class="text-xs text-gray-500 mb-2">Nama Penyakit</p>
+                <p class="font-bold text-gray-800 text-sm sm:text-base">{{ riwayat.penyakit.nama_penyakit }}</p>
+            </div>
+            
+            <!-- Nilai CF -->
+            <div>
+                <p class="text-xs text-gray-500 mb-2">Tingkat Keyakinan (CF)</p>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span class="inline-flex items-center justify-center px-3 sm:px-4 py-1.5 rounded-lg text-sm sm:text-base font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
+                        {{ "%.2f"|format(riwayat.nilai_cf * 100) }}%
+                    </span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-2.5 sm:h-3">
+                        <div class="bg-gradient-to-r from-emerald-500 to-blue-600 h-2.5 sm:h-3 rounded-full transition-all duration-500" 
+                             style="width: {{ (riwayat.nilai_cf * 100)|round|int }}%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Solusi -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                <div class="flex items-start space-x-2.5 sm:space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-lightbulb-fill text-blue-600 text-xs sm:text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-blue-900 mb-2 text-xs sm:text-sm">Rekomendasi Solusi</h4>
+                        <p class="text-gray-700 leading-relaxed text-xs">{{ riwayat.penyakit.solusi }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gejala yang Dipilih -->
+<div class="mt-4 sm:mt-6 bg-white rounded-xl overflow-hidden animate-fade-in border border-gray-100" style="animation-delay: 0.4s;">
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 sm:px-5 py-3 sm:py-4">
+        <h2 class="text-sm sm:text-base font-semibold text-white flex items-center space-x-2">
+            <i class="bi bi-list-check text-sm sm:text-base"></i>
+            <span>Gejala yang Dipilih</span>
+        </h2>
+    </div>
+    
+    <div class="p-4 sm:p-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for item in gejala_list %}
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 hover:border-blue-300 transition-all duration-200">
+                <div class="flex items-start space-x-2.5">
+                    <span class="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 bg-blue-600 text-white rounded-lg font-bold text-xs flex-shrink-0">
+                        {{ loop.index }}
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold bg-blue-100 text-blue-800 mb-1.5 border border-blue-200">
+                            {{ item.kode }}
+                        </span>
+                        <p class="text-gray-700 text-xs leading-tight mb-2">{{ item.nama }}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold 
+                            {% if item.kepastian == 'sangat_sering' %}bg-red-50 text-red-700 border border-red-200
+                            {% elif item.kepastian == 'sering' %}bg-orange-50 text-orange-700 border border-orange-200
+                            {% elif item.kepastian == 'jarang' %}bg-yellow-50 text-yellow-700 border border-yellow-200
+                            {% else %}bg-gray-50 text-gray-700 border border-gray-200{% endif %}">
+                            <i class="bi bi-circle-fill mr-1 text-xs"></i>
+                            {{ item.kepastian|replace('_', ' ')|title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

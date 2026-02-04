@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil Admin - Sistem Pakar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 320px;
+        max-width: 90vw;
+    }
+
+    @media (max-width: 640px) {
+        .alert-container {
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Flash Messages - Fixed Position -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+        {% for category, message in messages %}
+        <div class="alert-item mb-2 animate-fade-in">
+            <div class="bg-white rounded-lg p-3 shadow-md {% if category == 'success' %}border-l-4 border-green-500{% elif category == 'danger' or category == 'error' %}border-l-4 border-red-500{% elif category == 'warning' %}border-l-4 border-yellow-500{% else %}border-l-4 border-blue-500{% endif %}">
+                <div class="flex items-center space-x-2">
+                    <i class="bi {% if category == 'success' %}bi-check-circle-fill text-green-500{% elif category == 'danger' or category == 'error' %}bi-x-circle-fill text-red-500{% elif category == 'warning' %}bi-exclamation-triangle-fill text-yellow-500{% else %}bi-info-circle-fill text-blue-500{% endif %} text-base flex-shrink-0"></i>
+                    <span class="text-gray-700 font-medium text-xs flex-1">{{ message }}</span>
+                    <button onclick="dismissAlert(this)" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                        <i class="bi bi-x text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<!-- Page Header -->
+<div class="mb-6 md:mb-8 animate-fade-in">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center space-x-3">
+        <i class="bi bi-person-circle text-blue-500"></i>
+        <span>Profil Admin</span>
+    </h1>
+    <p class="text-gray-500 mt-2 text-sm md:text-base">Kelola informasi profil dan keamanan akun Anda</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+    <!-- Profile Card -->
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg overflow-hidden animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 md:px-6 py-6 md:py-8">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 bg-white rounded-full mb-3 md:mb-4 shadow-md">
+                        <i class="bi bi-person-circle text-blue-500 text-5xl md:text-6xl"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white break-words px-2">{{ current_user.nama_admin }}</h3>
+                    <p class="text-blue-100 mt-1 text-sm md:text-base">@{{ current_user.username }}</p>
+                </div>
+            </div>
+            
+            <div class="p-4 md:p-6">
+                <div class="space-y-3 md:space-y-4">
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="bi bi-shield-check text-blue-500 text-lg md:text-xl flex-shrink-0"></i>
+                        <div>
+                            <p class="text-xs md:text-sm text-gray-500">Status</p>
+                            <p class="font-semibold text-gray-800 text-sm md:text-base">Administrator</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="bi bi-calendar-event text-blue-500 text-lg md:text-xl flex-shrink-0"></i>
+                        <div>
+                            <p class="text-xs md:text-sm text-gray-500">Member Sejak</p>
+                            <p class="font-semibold text-gray-800 text-sm md:text-base">{{ current_user.created_at.strftime('%d %B %Y') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="bi bi-person-badge text-blue-500 text-lg md:text-xl flex-shrink-0"></i>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs md:text-sm text-gray-500">Username</p>
+                            <p class="font-semibold text-gray-800 text-sm md:text-base break-words">{{ current_user.username }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Form -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg overflow-hidden animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 md:px-8 py-4 md:py-6">
+                <h2 class="text-lg md:text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Update Profil & Keamanan</span>
+                </h2>
+            </div>
+            
+            <div class="p-4 md:p-8">
+                <form method="POST" action="{{ url_for('profile.update') }}" class="space-y-4 md:space-y-6">
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="nama_admin" class="block text-sm font-bold text-gray-700 mb-2">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" 
+                               class="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-sm md:text-base" 
+                               id="nama_admin" 
+                               name="nama_admin" 
+                               value="{{ current_user.nama_admin }}" 
+                               required>
+                    </div>
+                    
+                    <hr class="border-gray-200">
+                    
+                    <!-- Section Title -->
+                    <div class="flex items-center space-x-2">
+                        <i class="bi bi-key-fill text-blue-500 text-lg md:text-xl"></i>
+                        <h3 class="text-base md:text-lg font-bold text-gray-800">Ubah Password (Opsional)</h3>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg md:rounded-xl p-3 md:p-4 flex items-start space-x-2 md:space-x-3">
+                        <i class="bi bi-exclamation-triangle-fill text-yellow-500 text-lg md:text-xl flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-bold text-yellow-900 mb-1 text-sm md:text-base">Perhatian</h4>
+                            <p class="text-xs md:text-sm text-yellow-800">Kosongkan field password jika tidak ingin mengubah password.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Lama -->
+                    <div>
+                        <label for="password_lama" class="block text-sm font-bold text-gray-700 mb-2">
+                            Password Lama
+                        </label>
+                        <div class="relative">
+                            <input type="password" 
+                                   class="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all pr-10 md:pr-12 text-sm md:text-base" 
+                                   id="password_lama" 
+                                   name="password_lama"
+                                   placeholder="Masukkan password lama">
+                            <button type="button" 
+                                    onclick="togglePassword('password_lama', 'toggleOldIcon')"
+                                    class="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                                <i class="bi bi-eye text-lg md:text-xl" id="toggleOldIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Baru -->
+                    <div>
+                        <label for="password_baru" class="block text-sm font-bold text-gray-700 mb-2">
+                            Password Baru
+                        </label>
+                        <div class="relative">
+                            <input type="password" 
+                                   class="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all pr-10 md:pr-12 text-sm md:text-base" 
+                                   id="password_baru" 
+                                   name="password_baru"
+                                   placeholder="Masukkan password baru">
+                            <button type="button" 
+                                    onclick="togglePassword('password_baru', 'toggleNewIcon')"
+                                    class="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                                <i class="bi bi-eye text-lg md:text-xl" id="toggleNewIcon"></i>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-xs md:text-sm text-gray-500">Minimal 6 karakter untuk keamanan yang lebih baik</p>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="pt-2 md:pt-4">
+                        <button type="submit" 
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 md:py-3 px-4 md:px-6 rounded-lg md:rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-md text-sm md:text-base">
+                            <i class="bi bi-save text-lg md:text-xl"></i>
+                            <span>Simpan Perubahan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function dismissAlert(button) {
+        const alertItem = button.closest('.alert-item');
+        alertItem.classList.add('fade-out');
+        setTimeout(() => {
+            alertItem.remove();
+            const container = document.querySelector('.alert-container');
+            if (container && !container.querySelector('.alert-item')) {
+                container.remove();
+            }
+        }, 500);
+    }
+    
+    setTimeout(() => {
+        const alertItems = document.querySelectorAll('.alert-item');
+        alertItems.forEach(item => {
+            item.classList.add('fade-out');
+            setTimeout(() => {
+                item.remove();
+                const container = document.querySelector('.alert-container');
+                if (container && !container.querySelector('.alert-item')) {
+                    container.remove();
+                }
+            }, 500);
+        });
+    }, 5000);
+
+function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+</script>
+{% endblock %}
