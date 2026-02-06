@@ -204,6 +204,7 @@
 
 {% block extra_js %}
 <script>
+    // Alert dismiss function
     function dismissAlert(button) {
         const alertItem = button.closest('.alert-item');
         alertItem.classList.add('fade-out');
@@ -216,6 +217,7 @@
         }, 500);
     }
     
+    // Auto dismiss alerts after 5 seconds
     setTimeout(() => {
         const alertItems = document.querySelectorAll('.alert-item');
         alertItems.forEach(item => {
@@ -230,19 +232,20 @@
         });
     }, 5000);
 
-function togglePassword(inputId, iconId) {
-    const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
+    // Toggle password visibility
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
     }
-}
 </script>
 {% endblock %}

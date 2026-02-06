@@ -3,6 +3,7 @@ import { Brain, Activity, FileText, TrendingUp, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import FloatingChatAI from '../components/FloatingChatAi';
+import anxietyImg from '../assets/anxiety.jpg';
 
 const Home = () => {
   const { user } = useAuth();
@@ -175,7 +176,7 @@ const Home = () => {
             <div className="relative animate-fadeInScale">
               <div className="relative w-full h-[280px] sm:h-[320px] md:h-[350px] lg:h-[380px] rounded-xl overflow-hidden shadow-lg">
                 <img 
-                  src="/src/assets/anxiety.jpg" 
+                  src={anxietyImg} 
                   alt="Mental Health Consultation" 
                   className="w-full h-full object-cover"
                 />

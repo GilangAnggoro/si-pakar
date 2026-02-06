@@ -2,7 +2,59 @@
 
 {% block title %}Edit Penyakit - Sistem Pakar{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Alert positioning */
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 320px;
+        max-width: 90vw;
+    }
+
+    @media (max-width: 640px) {
+        .alert-container {
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Flash Messages - Fixed Position -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+        {% for category, message in messages %}
+        <div class="alert-item mb-2 animate-fade-in">
+            <div class="bg-white rounded-lg p-3 shadow-md {% if category == 'success' %}border-l-4 border-green-500{% elif category == 'danger' or category == 'error' %}border-l-4 border-red-500{% elif category == 'warning' %}border-l-4 border-yellow-500{% else %}border-l-4 border-blue-500{% endif %}">
+                <div class="flex items-center space-x-2">
+                    <i class="bi {% if category == 'success' %}bi-check-circle-fill text-green-500{% elif category == 'danger' or category == 'error' %}bi-x-circle-fill text-red-500{% elif category == 'warning' %}bi-exclamation-triangle-fill text-yellow-500{% else %}bi-info-circle-fill text-blue-500{% endif %} text-base flex-shrink-0"></i>
+                    <span class="text-gray-700 font-medium text-xs flex-1">{{ message }}</span>
+                    <button onclick="dismissAlert(this)" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                        <i class="bi bi-x text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
 <!-- Page Header -->
 <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in">
     <div>
@@ -112,4 +164,37 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Alert dismiss function
+function dismissAlert(button) {
+    const alertItem = button.closest('.alert-item');
+    alertItem.classList.add('fade-out');
+    setTimeout(() => {
+        alertItem.remove();
+        // Remove container if no alerts left
+        const container = document.querySelector('.alert-container');
+        if (container && !container.querySelector('.alert-item')) {
+            container.remove();
+        }
+    }, 500);
+}
+
+// Auto dismiss alerts after 5 seconds
+setTimeout(() => {
+    const alertItems = document.querySelectorAll('.alert-item');
+    alertItems.forEach(item => {
+        item.classList.add('fade-out');
+        setTimeout(() => {
+            item.remove();
+            const container = document.querySelector('.alert-container');
+            if (container && !container.querySelector('.alert-item')) {
+                container.remove();
+            }
+        }, 500);
+    });
+}, 5000);
+</script>
 {% endblock %}

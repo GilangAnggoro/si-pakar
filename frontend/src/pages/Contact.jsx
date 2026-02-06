@@ -196,8 +196,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1 text-sm">Email</h3>
-                    <p className="text-gray-600 text-sm">info@tenangin.com</p>
-                    <p className="text-gray-600 text-sm">support@tenangin.com</p>
+                    <p className="text-gray-600 text-sm">si-pakar@gmail.com</p>
                   </div>
                 </div>
 
@@ -207,8 +206,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1 text-sm">Telepon</h3>
-                    <p className="text-gray-600 text-sm">+62 123 4567 890</p>
-                    <p className="text-gray-600 text-sm">+62 987 6543 210</p>
+                    <p className="text-gray-600 text-sm">085655023632</p>
                   </div>
                 </div>
 
@@ -219,7 +217,7 @@ const Contact = () => {
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1 text-sm">Alamat</h3>
                     <p className="text-gray-600 text-sm">
-                      Jl. Raya Bangil No. 123<br />
+                      Jl. Raya Beji <br />
                       Bangil, Pasuruan<br />
                       Jawa Timur 67153<br />
                       Indonesia
@@ -245,7 +243,7 @@ const Contact = () => {
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 text-red-600 mr-2 flex-shrink-0" />
                   <p className="text-gray-800 font-semibold text-sm">
-                    Hotline Sejiwa: 119 ext. 8
+                    Hotline Sejiwa: 085655023632
                   </p>
                 </div>
                 <div className="flex items-center">

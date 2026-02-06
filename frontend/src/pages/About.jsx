@@ -2,6 +2,13 @@ import { Brain, Target, Zap, Shield, ArrowRight, Search, Calculator, CheckCircle
 import { useState } from 'react';
 import FloatingChatAI from '../components/FloatingChatAi';
 
+import perpisahanImg from '../assets/perpisahan_3.jpg';
+import mutismeImg from '../assets/mutisme_selektif.jpg';
+import sosialImg from '../assets/kecemasan_sosial.jpg';
+import panikImg from '../assets/gangguan_panik.jpg';
+import agoraphobiaImg from '../assets/agoraphobia.jpg';
+import umumImg from '../assets/kecemasan_umum.jpg';
+
 const About = () => {
   const [selectedPenyakit, setSelectedPenyakit] = useState(null);
 
@@ -18,7 +25,7 @@ const About = () => {
         'Keluhan fisik seperti sakit kepala atau perut',
         'Menolak tidur sendirian'
       ],
-      placeholder: 'src/assets/perpisahan 3.jpg'
+      placeholder: perpisahanImg
     },
     {
       kode: 'P02',
@@ -32,7 +39,7 @@ const About = () => {
         'Postur tubuh kaku atau tidak ekspresif',
         'Menggunakan bahasa tubuh atau isyarat untuk berkomunikasi'
       ],
-      placeholder: 'src/assets/mutisme selektif.jpg'
+      placeholder: mutismeImg
     },
     {
       kode: 'P03',
@@ -46,7 +53,7 @@ const About = () => {
         'Gejala fisik: berkeringat, gemetar, jantung berdebar',
         'Kesulitan berbicara atau pikiran kosong saat berinteraksi'
       ],
-      placeholder: 'src/assets/kecemasan sosial.jpg'
+      placeholder: sosialImg
     },
     {
       kode: 'P04',
@@ -63,7 +70,7 @@ const About = () => {
         'Pusing atau pingsan',
         'Takut kehilangan kendali atau mati'
       ],
-      placeholder: 'src/assets/gangguan panik.jpg'
+      placeholder: panikImg
     },
     {
       kode: 'P05',
@@ -78,7 +85,7 @@ const About = () => {
         'Takut berada di luar rumah sendirian',
         'Serangan panik di situasi tertentu'
       ],
-      placeholder: 'src/assets/agoraphobia.jpg'
+      placeholder: agoraphobiaImg
     },
     {
       kode: 'P06',
@@ -95,7 +102,7 @@ const About = () => {
         'Ketegangan otot',
         'Gangguan tidur'
       ],
-      placeholder: 'src/assets/kecemasan umum.jpg'
+      placeholder: umumImg
     }
   ];
 

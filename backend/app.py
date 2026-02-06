@@ -88,11 +88,16 @@ def create_app():
     app.register_blueprint(auth_user_bp)
     app.register_blueprint(contact_bp)
     
-    # Register blueprint untuk AI Chat
+    # ===========================================================
+    # Register blueprint untuk AI Chat  (INI BAGIAN YANG DIBETULKAN)
+    # ===========================================================
     try:
-        from routes.openrouter_chat import openrouter_bp
+        # 🔥 FIX PENTING: gunakan openrouter.py (file baru yang benar)
+        from routes.openrouter import openrouter_bp
+
         app.register_blueprint(openrouter_bp)
-        print("✅ AI Chat ready")
+        print("✅ AI Chat ready (Menggunakan routes/openrouter.py)")
+
     except ImportError as e:
         print(f"⚠️  AI Chat not loaded: {e}")
     
@@ -246,7 +251,8 @@ def create_app():
     @app.route('/api/health', methods=['GET'])
     def health_check():
         try:
-            db.session.execute('SELECT 1')
+            from sqlalchemy import text
+            db.session.execute(text('SELECT 1'))
             db_status = "connected"
         except Exception as e:
             db_status = f"error: {str(e)}"

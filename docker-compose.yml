@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    container_name: si-pakar-backend
+    volumes:
+      - ./backend/instance:/app/instance
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-sistem-pakar-2024}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "5000:5000"
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: si-pakar-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  default:
+    name: si-pakar-network
